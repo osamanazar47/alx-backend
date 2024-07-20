@@ -2,7 +2,7 @@
 """Module for task 2"""
 import csv
 import math
-from typing import List
+from typing import List, Dict
 
 
 class Server:
@@ -36,35 +36,31 @@ class Server:
             }
         return self.__indexed_dataset
 
-    def get_hyper_index(self, index: int = 0, page_size: int = 10) -> dict:
-        """Returns a dictionary with these keys: index,
-        next_index, page_size, and data."""
-        assert isinstance(index, int) and index >= 0
-        assert isinstance(page_size, int) and page_size > 0
-
-        dataset = self.indexed_dataset()
-        total_items = len(dataset)
-        keys = sorted(dataset.keys())
-
-        if index >= total_items:
-            return {
-                'index': index,
-                'next_index': None,
-                'page_size': 0,
-                'data': []
-            }
-
-        start_idx = index
-        end_idx = min(start_idx + page_size, total_items)
-        page_data = [dataset[keys[i]] for i in range(start_idx, end_idx)]
-        next_index = keys[end_idx] if end_idx < total_items else None
-
-        return {
+    def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """Retrieves info about a page from a given index and with a
+        specified size.
+        """
+        data = self.indexed_dataset()
+        assert index is not None and index >= 0 and index <= max(data.keys())
+        page_data = []
+        data_count = 0
+        next_index = None
+        start = index if index else 0
+        for i, item in data.items():
+            if i >= start and data_count < page_size:
+                page_data.append(item)
+                data_count += 1
+                continue
+            if data_count == page_size:
+                next_index = i
+                break
+        page_info = {
             'index': index,
             'next_index': next_index,
             'page_size': len(page_data),
-            'data': page_data
+            'data': page_data,
         }
+        return page_info
 
 
 def index_range(page: int, page_size: int) -> tuple:
