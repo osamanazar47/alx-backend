@@ -37,17 +37,15 @@ class Server:
         return self.__indexed_dataset
 
 
-    def get_hyper_index(self, index: int = None, page_size: int = 10) -> dict:
-        """
-        Returns a dictionary with these keys index,
-        next_index, page_size and data
-        """
+    def get_hyper_index(self, index: int = 0, page_size: int = 10) -> dict:
+        """Returns a dictionary with these keys: index, next_index, page_size, and data."""
         assert isinstance(index, int) and index >= 0
         assert isinstance(page_size, int) and page_size > 0
-        dataset = self.dataset()
+
+        dataset = self.indexed_dataset()
         total_items = len(dataset)
-        if index is None:
-            index = 0
+        keys = sorted(dataset.keys())
+
         if index >= total_items:
             return {
                 'index': index,
@@ -55,17 +53,18 @@ class Server:
                 'page_size': 0,
                 'data': []
             }
-        end_index = min(index + page_size, total_items)
-        page_data = dataset[index:end_index]
-        next_index = end_index if end_index < total_items else None
-        h_dict = {
+
+        start_idx = index
+        end_idx = min(start_idx + page_size, total_items)
+        page_data = [dataset[keys[i]] for i in range(start_idx, end_idx)]
+        next_index = keys[end_idx] if end_idx < total_items else None
+
+        return {
             'index': index,
             'next_index': next_index,
             'page_size': len(page_data),
             'data': page_data
         }
-
-        return h_dict
 
 
 def index_range(page: int, page_size: int) -> tuple:
