@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """BasicCache Module"""
-BaseCaching = __import__('base_caching').BaseCaching
+from base_caching import BaseCaching
 
 
 class BasicCache(BaseCaching):
@@ -13,6 +13,8 @@ class BasicCache(BaseCaching):
         """Assign key- value pair in the caching data"""
         if key and item:
             self.cache_data[key] = item
+        else:
+            return
 
     def get(self, key):
         """returns the value of the given key from the cache"""
