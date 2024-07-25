@@ -19,8 +19,8 @@ class MRUCache(BaseCaching):
             if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
                 newest_key = max(self.mru.keys(), key=lambda k: self.mru[k])
                 print("DISCARD:", newest_key)
-                self.cache_data.pop(newest_key)
-                self.mru.pop(newest_key)
+                del self.cache_data[newest_key]
+                del self.mru[newest_key]
         self.cache_data[key] = item
         self.mru[key] = self.tm
         self.tm += 1
@@ -28,7 +28,7 @@ class MRUCache(BaseCaching):
     def get(self, key):
         """Retrieves an element from the cache"""
         if key in self.cache_data:
-            self.ru[key] = self.tm
+            self.mru[key] = self.tm
             self.tm += 1
             return self.cache_data.get(key)
         return None
