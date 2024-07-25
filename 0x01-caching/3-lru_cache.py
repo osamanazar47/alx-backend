@@ -15,11 +15,12 @@ class LRUCache(BaseCaching):
         """Adds an item in the cache"""
         if key is None or item is None:
             return
-        if key not in self.cache_data and len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-            old_key = min(self.lru.keys(), key=lambda k: self.lru[k])
-            print("DISCARD:", old_key)
-            self.cache_data.pop(old_key)
-            self.lru.pop(old_key)
+        if key not in self.cache_data:
+            if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+                old_key = min(self.lru.keys(), key=lambda k: self.lru[k])
+                print("DISCARD:", old_key)
+                self.cache_data.pop(old_key)
+                self.lru.pop(old_key)
         self.cache_data[key] = item
         self.lru[key] = self.tm
         self.tm += 1
